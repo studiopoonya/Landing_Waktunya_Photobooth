@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: #ffffff;
+    color: #0f172a;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100vh;
+    text-align: left;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+/* ── Keyframes ─────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-8px) rotate(2deg); }
+}
+
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0);    animation-timing-function: cubic-bezier(.8,0,1,1); }
+  50%       { transform: translateY(-6px); animation-timing-function: cubic-bezier(0,0,.2,1); }
+}
+
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(250%)  skewX(-15deg); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0   0   rgba(56, 189, 248, 0); }
+  50%       { box-shadow: 0 0 24px 6px rgba(56, 189, 248, 0.35); }
+}
+
+@keyframes gradient-shift {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+
+/* ── Animation utilities ────────────────────────────── */
+@layer utilities {
+  .animate-float       { animation: float      3.5s ease-in-out infinite; will-change: transform; }
+  .animate-float-slow  { animation: float-slow 5s   ease-in-out infinite; will-change: transform; }
+  .animate-bounce-soft { animation: bounce-soft 2.5s infinite;            will-change: transform; }
+
+  /* Button shimmer sweep on hover — GPU-only (transform + opacity) */
+  .btn-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-shimmer::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 0;
+    width: 30%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: translateX(-150%) skewX(-15deg);
+    will-change: transform;
+  }
+  .btn-shimmer:hover::after {
+    transform: translateX(450%) skewX(-15deg);
+    transition: transform 0.55s ease;
+  }
+
+  /* Glow on hover — only shadow + translateY (no filter) */
+  .btn-glow { transition: box-shadow 0.2s ease, transform 0.2s ease; }
+  .btn-glow:hover {
+    box-shadow: 0 8px 28px rgba(56, 189, 248, 0.4);
+    transform: translateY(-1px);
+  }
+
+  /* Card hover lift */
+  .card-glow { transition: box-shadow 0.25s ease, transform 0.25s ease; }
+  .card-glow:hover {
+    box-shadow: 0 12px 32px rgba(56, 189, 248, 0.1);
+  }
+
+  /* Gradient utilities */
+  .gradient-text {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-brand {
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(14, 165, 233, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(14, 165, 233, 0.12);
+    box-shadow: 0 4px 24px rgba(3, 105, 161, 0.08);
+  }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid #e0f2fe;
+    box-shadow: 0 2px 16px rgba(14, 165, 233, 0.07);
+  }
+}
