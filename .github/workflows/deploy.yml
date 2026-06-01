@@ -28,7 +28,7 @@ jobs:
           cd /www/wwwroot/waktunyaphotobooth.com/frontend
           chattr -i dist/.user.ini 2>/dev/null || true
           rm -rf dist
-          npm ci
+          npm install
           npm run build
 
       - name: Install PHP dependencies
