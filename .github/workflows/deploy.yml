@@ -20,24 +20,34 @@ jobs:
           git pull origin main
 
       - name: Build frontend
+        env:
+          HOME: /root
         run: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           cd /www/wwwroot/waktunyaphotobooth.com/frontend
           chattr -i dist/.user.ini 2>/dev/null || true
           rm -rf dist
-          npm ci --silent
+          npm ci
           npm run build
 
       - name: Install PHP dependencies
+        env:
+          HOME: /root
         run: |
           cd /www/wwwroot/waktunyaphotobooth.com/backend
           composer install --no-dev --optimize-autoloader --no-interaction
 
       - name: Run migrations
+        env:
+          HOME: /root
         run: |
           cd /www/wwwroot/waktunyaphotobooth.com/backend
           php artisan migrate --force
 
       - name: Cache config & routes
+        env:
+          HOME: /root
         run: |
           cd /www/wwwroot/waktunyaphotobooth.com/backend
           php artisan optimize:clear
