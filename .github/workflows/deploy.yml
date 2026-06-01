@@ -10,6 +10,8 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull latest code
+        env:
+          HOME: /root
         run: |
           APP_DIR="/www/wwwroot/waktunyaphotobooth.com"
           git config --global --add safe.directory "$APP_DIR"
