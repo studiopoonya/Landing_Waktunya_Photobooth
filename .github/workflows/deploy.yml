@@ -3,15 +3,12 @@ name: Deploy Landing Page to VPS
 on:
   push:
     branches:
-      - main  # Atau ganti master jika branch utamamu namanya master
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
       - name: Deploy via SSH to VPS
         uses: appleboy/ssh-action@master
         with:
@@ -20,15 +17,32 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           script: |
-            # Membuat folder project di VPS jika belum ada
-            mkdir -p /www/wwwroot/waktunyaphotobooth.com
-            
-            # Masuk ke folder tujuan
-            cd /www/wwwroot/waktunyaphotobooth.com
-            
-            # Tarik kodingan terbaru langsung di dalam VPS
-            if [ -d ".git" ]; then
-              git pull origin main
+            APP_DIR="/www/wwwroot/waktunyaphotobooth.com"
+
+            echo "=== [1/5] Pull latest code ==="
+            if [ -d "$APP_DIR/.git" ]; then
+              cd "$APP_DIR" && git pull origin main
             else
-              git clone https://github.com/studiopoonya/Landing_Waktunya_Photobooth.git .
+              git clone https://github.com/studiopoonya/Landing_Waktunya_Photobooth.git "$APP_DIR"
             fi
+
+            echo "=== [2/5] Build frontend ==="
+            cd "$APP_DIR/frontend"
+            npm ci --silent
+            npm run build
+
+            echo "=== [3/5] Install PHP dependencies ==="
+            cd "$APP_DIR/backend"
+            composer install --no-dev --optimize-autoloader --no-interaction
+
+            echo "=== [4/5] Run migrations ==="
+            php artisan migrate --force
+
+            echo "=== [5/5] Cache config & routes ==="
+            php artisan optimize:clear
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            chmod -R 775 storage bootstrap/cache
+
+            echo "=== Deploy selesai! ==="
