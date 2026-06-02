@@ -95,7 +95,7 @@ export default function HeroSection({ onOpenForm }) {
               transition={{ delay: 0.6, duration: 0.6 }}
               className="text-lg text-slate-500 leading-relaxed mb-8 max-w-md"
             >
-              Photobooth modern dengan properti premium dan hasil cetak instan.
+              Photobooth harga terjangkau dengan kualitas premium dan hasil cetak event.
               Sempurna untuk pernikahan, ulang tahun &amp; corporate event.
             </motion.p>
 
