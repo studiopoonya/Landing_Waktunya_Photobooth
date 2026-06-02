@@ -68,6 +68,51 @@ export async function fetchAllLeadsForExport() {
   return res.json();
 }
 
+export async function fetchAccounts() {
+  const res = await guardedFetch(`${API_URL}/admin/accounts`, { headers: authHeaders() });
+  return res.json();
+}
+
+export async function createAccount(data) {
+  return guardedFetch(`${API_URL}/admin/accounts`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteAccount(id) {
+  return guardedFetch(`${API_URL}/admin/accounts/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+}
+
+export async function updatePassword(id, password) {
+  return guardedFetch(`${API_URL}/admin/accounts/${id}/password`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify({ password }),
+  });
+}
+
+export async function getSetting(key) {
+  const res = await fetch(`${API_URL.replace('/api', '')}/api/settings/${key}`, {
+    headers: { 'Accept': 'application/json' },
+  });
+  const data = await res.json();
+  return data.value;
+}
+
+export async function updateSetting(key, value) {
+  const res = await guardedFetch(`${API_URL}/admin/settings/${key}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify({ value }),
+  });
+  return res.json();
+}
+
 export function downloadCSV(leads) {
   const headers = ['No', 'Nama', 'Nomor HP', 'Email', 'Tanggal Daftar'];
   const rows = leads.map((l, i) => [

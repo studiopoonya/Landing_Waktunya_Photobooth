@@ -1,35 +1,13 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Check, ArrowRight } from 'lucide-react';
 
-const plans = [
-  {
-    id: 'no-print',
-    label: 'Tanpa Print',
-    sublabel: '2 Jam · Digital Only',
-    price: '1.000.000',
-    desc: 'Cocok untuk event casual tanpa cetak foto.',
-    highlight: false,
-    emoji: '📱',
-  },
-  {
-    id: '2jam',
-    label: 'Paket 2 Jam',
-    sublabel: '2 Jam · Cetak 2R atau 4R',
-    price: '1.499.000',
-    desc: 'Pilihan paling populer untuk semua jenis acara.',
-    highlight: true,
-    emoji: '⭐',
-  },
-  {
-    id: '3jam',
-    label: 'Paket 3 Jam',
-    sublabel: '3 Jam · Cetak 2R atau 4R',
-    price: '1.849.000',
-    desc: 'Ideal untuk pernikahan dan event besar.',
-    highlight: false,
-    emoji: '🎉',
-  },
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+
+const defaultPlans = [
+  { id: 'no-print', emoji: '📱', label: 'Tanpa Print',  sublabel: '2 Jam · Digital Only',      price: '1.000.000', desc: 'Cocok untuk event casual tanpa cetak foto.',         highlight: false },
+  { id: '2jam',     emoji: '⭐', label: 'Paket 2 Jam',  sublabel: '2 Jam · Cetak 2R atau 4R',  price: '1.499.000', desc: 'Pilihan paling populer untuk semua jenis acara.',    highlight: true  },
+  { id: '3jam',     emoji: '🎉', label: 'Paket 3 Jam',  sublabel: '3 Jam · Cetak 2R atau 4R',  price: '1.849.000', desc: 'Ideal untuk pernikahan dan event besar.',            highlight: false },
 ];
 
 const facilities = [
@@ -39,8 +17,16 @@ const facilities = [
 ];
 
 export default function PricingSection({ onOpenForm }) {
-  const titleRef = useRef(null);
+  const titleRef  = useRef(null);
   const titleInView = useInView(titleRef, { once: true, margin: '-60px' });
+  const [plans, setPlans] = useState(defaultPlans);
+
+  useEffect(() => {
+    fetch(`${API_URL.replace('/api', '')}/api/settings/packages`, { headers: { Accept: 'application/json' } })
+      .then(r => r.json())
+      .then(d => { if (d.value) setPlans(d.value); })
+      .catch(() => {});
+  }, []);
 
   return (
     <section id="pricing" className="py-24 md:py-32 bg-slate-50 overflow-hidden">

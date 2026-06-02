@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\Lead;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -12,17 +13,16 @@ class AdminApiController extends Controller
 {
     public function login(Request $request)
     {
-        if (
-            $request->email    !== config('admin.email') ||
-            $request->password !== config('admin.password')
-        ) {
+        $admin = Admin::where('email', $request->email)->first();
+
+        if (!$admin || !$admin->checkPassword($request->password)) {
             return response()->json(['message' => 'Email atau password salah.'], 401);
         }
 
         $token = Str::random(64);
-        Cache::put('admin_token:' . $token, true, now()->addHours(8));
+        Cache::put('admin_token:' . $token, $admin->id, now()->addHours(8));
 
-        return response()->json(['token' => $token]);
+        return response()->json(['token' => $token, 'admin' => ['id' => $admin->id, 'name' => $admin->name, 'email' => $admin->email]]);
     }
 
     public function logout(Request $request)

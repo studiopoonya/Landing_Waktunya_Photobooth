@@ -44,6 +44,7 @@ jobs:
         run: |
           cd /www/wwwroot/waktunyaphotobooth.com/backend
           php artisan migrate --force
+          php artisan db:seed --force
 
       - name: Cache config & routes
         env:
